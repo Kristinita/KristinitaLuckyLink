@@ -12,15 +12,14 @@ r"""ASCII Decorator swan font.
 import sublime_plugin
 
 from duckduckgo import query
-from google import search
+from pygoogling.googling import GoogleSearch
 
 
 class KristinitaLuckyLinkDuckDuckGoCommand(sublime_plugin.TextCommand):
-    """Get first link from DuckDuckGo SERP.
+    """Get first link from DuckDuckGo SERP and wrap selected to Markdown link construction.
 
-    Wrap word to Markdown link construction.
-    See, if incorrect path:
-    https://stackoverflow.com/q/42652998/5951529
+    Word wrap to Markdown link with first DuckDuckGo SERP result.
+    For example, Поиск Кристиниты → [Поиск Кристиниты](http://kristinita.ru/).
 
     Extends:
         sublime_plugin.TextCommand
@@ -60,9 +59,6 @@ class KristinitaLuckyLinkDuckDuckGoCommand(sublime_plugin.TextCommand):
 
     def run(self, edit):
         """Run KristinitaLuckyLink for DuckDuckGo.
-
-        Word wrap to Markdown link with first DuckDuckGo SERP result.
-        For example, Поиск Кристиниты → [Поиск Кристиниты](http://kristinita.ru/).
 
         Using DuckDuckGo module, ported to Sublime Text 3:
             https://github.com/Kristinita/python-duckduckgo
@@ -124,19 +120,15 @@ class KristinitaLuckyLinkDuckDuckGoCommand(sublime_plugin.TextCommand):
 
 
 class KristinitaLuckyLinkGoogleCommand(KristinitaLuckyLinkDuckDuckGoCommand):
-    """Get first link from Google SERP.
+    """Get first link from Google SERP and wrap selected to Markdown link construction.
 
-    Get first link of Google SERP.
+    Word wrap to Markdown link with first Google SERP result.
+    For example, Поиск Кристиниты → [Поиск Кристиниты](http://kristinita.ru/).
 
-    Using google module:
-        http://archive.li/TaC8V
-        http://archive.li/59pbq
+    Using pygoogling module:
+        https://pypi.python.org/pypi/pygoogling
 
-    Works with bugs:
-        1. Multiple results («Кристина Кива» query),
-        1. No result («Python Google» query),
-        1. News, not SERP («Carmelo Anthony» query),
-        1. HTML metadata links («YAML» query).
+    google module works with bugs.
 
     xgoogle module not compatible with Python 3.3, see:
         http://bit.ly/2CURRIx
@@ -148,20 +140,34 @@ class KristinitaLuckyLinkGoogleCommand(KristinitaLuckyLinkDuckDuckGoCommand):
     def run(self, edit):
         """Run KristinitaLuckyLink for Google.
 
-        Word wrap to Markdown link with first Google SERP result.
-        For example, Поиск Кристиниты → [Поиск Кристиниты](http://kristinita.ru/).
-
         Arguments:
             edit {str} -- edit text in Sublime Text
         """
         selection_text, selection_region = self.get_selection()
         print('KristinitaLuckyLink Google called')
 
+        # [DEPRECATED] google module:
+        #
+        # Reason — bugs for:
+        #
+        # 1. Multiple results («Кристина Кива» query),
+        # 2. No result («Python Google» query),
+        # 3. News, not SERP («Carmelo Anthony» query),
+        # 4. HTML metadata links («YAML» query).
+        #
+        # About google module:
+        # http://archive.li/TaC8V
+        # http://archive.li/59pbq
+        #
+        # from google import search
         # Add pause, because multiple results may appear
         # and user may be blocked
-        for final_google_link in search(
-                selection_text, num=1, stop=1, pause=5.0):
-            print(final_google_link)
+        # for final_google_link in search(
+        #         selection_text, num=1, stop=1, pause=5.0):
+        #     print(final_google_link)
+        google_search = GoogleSearch(selection_text)
+        google_search.start_search(max_page=1)
+        final_google_link = google_search.search_result[0]
         markdown_google_link = '[' + selection_text + \
             ']' + '(' + final_google_link + ')'
 
