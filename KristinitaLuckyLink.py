@@ -9,10 +9,16 @@ r"""ASCII Decorator swan font.
                                                            `-'
 """
 
+import os
 import sublime_plugin
+import sys
 
-from duckduckgo import query
-from pygoogling.googling import GoogleSearch
+# PYTHONPACKAGES path
+# https://stackoverflow.com/a/1681244/5951529
+sys.path.append((os.environ['PYTHONPACKAGES']))
+
+from duckduckgo import query  # noqa
+from pygoogling.googling import GoogleSearch  # noqa
 
 
 class KristinitaLuckyLinkDuckDuckGoCommand(sublime_plugin.TextCommand):
