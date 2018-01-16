@@ -14,18 +14,16 @@ import sublime_plugin
 import sys
 
 
-# [DEPRECATED] PYTHONPACKAGES path appending
-#
-# Reason — users don't needs set anything
-#
 # PYTHONPACKAGES path
-# https://stackoverflow.com/a/1681244/5951529
-# sys.path.append((os.environ['PYTHONPACKAGES']))
-#
+# https://stackoverflow.com/a/4907053/5951529
+sys.path.append((os.environ['PYTHONPACKAGES']))
+
+# [BUG] StopIteration error
+# https://docs.python.org/3/library/exceptions.html#StopIteration
 # Append site_packages folder:
 # https://stackoverflow.com/a/31384782/5951529
-site_packages = next(p for p in sys.path if 'site-packages' in p)
-sys.path.append(site_packages)
+# site_packages = next(p for p in sys.path if 'site-packages' in p)
+# sys.path.append(site_packages)
 
 
 from duckduckgo import query  # noqa
