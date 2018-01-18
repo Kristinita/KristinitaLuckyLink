@@ -14,9 +14,13 @@ import sublime_plugin
 import sys
 
 
-# PYTHONPACKAGES path
+# PYTHONPACKAGES path:
 # https://stackoverflow.com/a/4907053/5951529
-sys.path.append((os.environ['PYTHONPACKAGES']))
+# Disable duplicate paths:
+# https://stackoverflow.com/a/42656754/5951529
+site_packages = (os.environ['PYTHONPACKAGES'])
+if site_packages not in sys.path:
+    sys.path.append(site_packages)
 
 # [BUG] StopIteration error
 # https://docs.python.org/3/library/exceptions.html#StopIteration
